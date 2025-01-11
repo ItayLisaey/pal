@@ -4,8 +4,6 @@ import { openai } from "@ai-sdk/openai";
 import { generateObject, generateText } from "ai";
 import { z } from "zod";
 
-export const maxDuration = 60;
-
 export async function generateBlock(prompt: string) {
   const response = await generateText({
     model: openai("gpt-4o-mini"),

@@ -7,6 +7,7 @@ import { Loader2Icon, SendIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useState, useTransition } from "react";
 import { generateBlock } from "./actions";
+export const maxDuration = 60;
 
 export default function Home() {
   const [pending, startTransition] = useTransition();
