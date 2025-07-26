@@ -11,15 +11,11 @@ export const maxDuration = 60;
 
 export default function Home() {
   const [pending, startTransition] = useTransition();
-  const [aiResponse, setAiResponse] = useState<{
-    frame1: string[][];
-    frame2: string[][];
-    frame3: string[][];
-  }>({
-    frame1: Array(10).fill(Array(10).fill("0")),
-    frame2: Array(10).fill(Array(10).fill("0")),
-    frame3: Array(10).fill(Array(10).fill("0")),
-  });
+  const [aiResponse, setAiResponse] = useState<string[][]>(
+    Array(16)
+      .fill(null)
+      .map(() => Array(16).fill("0"))
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,48 +36,27 @@ export default function Home() {
             animate={{ opacity: 1 }}
             className='flex flex-col gap-0.5 sm:gap-1 p-3 sm:p-4 bg-card rounded-lg '
           >
-            {aiResponse.frame1.map((row, rowIndex) => (
+            {aiResponse.map((row, rowIndex) => (
               <div key={rowIndex} className='flex gap-0.5 sm:gap-1'>
                 {row.map((cell, cellIndex) => (
                   <motion.div
                     key={`${rowIndex}-${cellIndex}`}
                     layout
-                    animate={
-                      pending
-                        ? {
-                            opacity: [0.5, 1, 0.5],
-                          }
-                        : {
-                            backgroundColor: [
-                              aiResponse.frame1[rowIndex][cellIndex] === "1"
-                                ? "#1b1b1b"
-                                : "#F3F4F6",
-                              aiResponse.frame2[rowIndex][cellIndex] === "1"
-                                ? "#1b1b1b"
-                                : "#F3F4F6",
-                              aiResponse.frame3[rowIndex][cellIndex] === "1"
-                                ? "#1b1b1b"
-                                : "#F3F4F6",
-                            ],
-                          }
-                    }
+                    initial={{ scale: 0 }}
+                    animate={{
+                      scale: 1,
+                      opacity: pending ? [0.5, 1, 0.5] : 1,
+                    }}
                     transition={{
-                      duration: 3,
-                      times: [0, 0.33, 0.66],
-                      repeat: Infinity,
-                      repeatType: "mirror",
+                      duration: pending ? 1.5 : 0.3,
+                      repeat: pending ? Infinity : 0,
+                      repeatType: pending ? "reverse" : undefined,
                     }}
                     className={cn(
-                      "w-6 h-6 sm:w-8 sm:h-8 rounded-sm",
-                      pending ? "animate-pulse" : ""
+                      "w-4 h-4 sm:w-5 sm:h-5 rounded-sm",
+                      cell === "1" ? "bg-[#1b1b1b]" : "bg-[#F3F4F6]",
+                      pending && "animate-pulse"
                     )}
-                    style={{
-                      backgroundColor: pending
-                        ? aiResponse.frame1[rowIndex][cellIndex] === "1"
-                          ? "#4B5563"
-                          : "#F3F4F6"
-                        : undefined,
-                    }}
                   />
                 ))}
               </div>
