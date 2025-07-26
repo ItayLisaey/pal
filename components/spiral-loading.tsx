@@ -6,7 +6,7 @@ interface SpiralLoadingProps {
   onComplete?: () => void;
   size?: number;
   cellSize?: string;
-  targetData?: string[][];
+  targetData?: number[][];
 }
 
 function generateSpiralOrder(size: number): number[][] {
@@ -45,8 +45,8 @@ function generateSpiralOrder(size: number): number[][] {
 export function SpiralLoading({
   isLoading,
   onComplete,
-  size = 16,
-  cellSize = "w-4 h-4 sm:w-5 sm:h-5",
+  size = 30,
+  cellSize = "w-2 h-2 sm:w-3 sm:h-3",
   targetData,
 }: SpiralLoadingProps) {
   const [spiralOrder] = useState(() => generateSpiralOrder(size));
@@ -73,7 +73,7 @@ export function SpiralLoading({
             clearInterval(interval);
             // Keep all cells active while loading continues
           }
-        }, 50); // 50ms delay between each cell
+        }, 30); // Faster animation for more cells
 
         return () => clearInterval(interval);
       }, 100);
@@ -97,7 +97,7 @@ export function SpiralLoading({
   const getCellDelay = (rowIndex: number, cellIndex: number): number => {
     if (isMorphing) {
       // Top-to-bottom stagger for morphing
-      return rowIndex * 80 + cellIndex * 5; // Row delay + slight column offset
+      return rowIndex * 60 + cellIndex * 3; // Adjusted for more cells
     }
 
     const cellOrder = spiralOrder.findIndex(
@@ -105,9 +105,9 @@ export function SpiralLoading({
     );
     if (isClosing) {
       // Reverse order for closing, much faster
-      return (spiralOrder.length - cellOrder) * 20;
+      return (spiralOrder.length - cellOrder) * 15;
     }
-    return cellOrder * 50;
+    return cellOrder * 30; // Faster spiral for more cells
   };
 
   const isCellActive = (rowIndex: number, cellIndex: number): boolean => {
@@ -142,7 +142,7 @@ export function SpiralLoading({
                         ? {
                             scale: 1,
                             backgroundColor:
-                              targetData[rowIndex]?.[cellIndex] === "1"
+                              targetData[rowIndex]?.[cellIndex] === 1
                                 ? "#1b1b1b"
                                 : "#F3F4F6",
                             boxShadow: "0 0 0px rgba(59, 130, 246, 0)",
@@ -165,7 +165,7 @@ export function SpiralLoading({
                         ? {
                             scale: 1,
                             backgroundColor:
-                              targetData[rowIndex]?.[cellIndex] === "1"
+                              targetData[rowIndex]?.[cellIndex] === 1
                                 ? ["#2563EB", "#1b1b1b"]
                                 : ["#2563EB", "#F3F4F6"],
                             boxShadow: [

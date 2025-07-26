@@ -2,13 +2,13 @@ import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 
 interface GridDisplayProps {
-  data: string[][];
+  data: number[][];
   cellSize?: string;
 }
 
 export function GridDisplay({
   data,
-  cellSize = "w-4 h-4 sm:w-5 sm:h-5",
+  cellSize = "w-2 h-2 sm:w-3 sm:h-3",
 }: GridDisplayProps) {
   return (
     <motion.div
@@ -25,17 +25,17 @@ export function GridDisplay({
               initial={{ scale: 0, backgroundColor: "#F3F4F6" }}
               animate={{
                 scale: 1,
-                backgroundColor: cell === "1" ? "#1b1b1b" : "#F3F4F6",
+                backgroundColor: cell === 1 ? "#1b1b1b" : "#F3F4F6",
               }}
               transition={{
                 duration: 0.3,
-                delay: (rowIndex * row.length + cellIndex) * 0.01,
+                delay: (rowIndex * row.length + cellIndex) * 0.005, // Reduced delay for more cells
                 ease: "easeOut",
               }}
               className={cn(
                 cellSize,
                 "rounded-sm",
-                cell === "1" ? "bg-[#1b1b1b]" : "bg-[#F3F4F6]"
+                cell === 1 ? "bg-[#1b1b1b]" : "bg-[#F3F4F6]"
               )}
             />
           ))}

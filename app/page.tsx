@@ -2,6 +2,7 @@
 
 import { SpiralLoading } from "@/components/spiral-loading";
 import { Input } from "@/components/ui/input";
+import { CoreMessage } from "ai";
 import { CornerDownLeft } from "lucide-react";
 import { motion } from "motion/react";
 import { useState, useTransition } from "react";
@@ -10,11 +11,12 @@ export const maxDuration = 60;
 
 export default function Home() {
   const [pending, startTransition] = useTransition();
-  const [aiResponse, setAiResponse] = useState<string[][]>(
-    Array(16)
+  const [aiResponse, setAiResponse] = useState<number[][]>(
+    Array(30)
       .fill(null)
-      .map(() => Array(16).fill("0"))
+      .map(() => Array(30).fill(0))
   );
+  const [messages, setMessages] = useState<CoreMessage[]>([]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,8 +27,15 @@ export default function Home() {
     input.value = ""; // Clear input after submission
 
     startTransition(async () => {
-      const response = await generateBlock(value);
+      const response = await generateBlock(value, messages);
       setAiResponse(response.matrix);
+
+      // Update conversation history
+      setMessages((prev) => [
+        ...prev,
+        { role: "user", content: value },
+        { role: "assistant", content: `Generated SVG: ${response.svg}` },
+      ]);
     });
   };
 
@@ -42,8 +51,8 @@ export default function Home() {
             <SpiralLoading
               isLoading={pending}
               targetData={!pending ? aiResponse : undefined}
-              size={16}
-              cellSize='w-4 h-4 sm:w-5 sm:h-5'
+              size={30}
+              cellSize='w-2 h-2 sm:w-3 sm:h-3'
             />
           </motion.div>
         </div>
