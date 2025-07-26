@@ -1,8 +1,9 @@
 "use client";
 
+import { GridDisplay } from "@/components/grid-display";
+import { SpiralLoading } from "@/components/spiral-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { Loader2Icon, SendIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useState, useTransition } from "react";
@@ -34,33 +35,17 @@ export default function Home() {
           <motion.div
             layout
             animate={{ opacity: 1 }}
-            className='flex flex-col gap-0.5 sm:gap-1 p-3 sm:p-4 bg-card rounded-lg '
+            className='p-3 sm:p-4 bg-card rounded-lg'
           >
-            {aiResponse.map((row, rowIndex) => (
-              <div key={rowIndex} className='flex gap-0.5 sm:gap-1'>
-                {row.map((cell, cellIndex) => (
-                  <motion.div
-                    key={`${rowIndex}-${cellIndex}`}
-                    layout
-                    initial={{ scale: 0 }}
-                    animate={{
-                      scale: 1,
-                      opacity: pending ? [0.5, 1, 0.5] : 1,
-                    }}
-                    transition={{
-                      duration: pending ? 1.5 : 0.3,
-                      repeat: pending ? Infinity : 0,
-                      repeatType: pending ? "reverse" : undefined,
-                    }}
-                    className={cn(
-                      "w-4 h-4 sm:w-5 sm:h-5 rounded-sm",
-                      cell === "1" ? "bg-[#1b1b1b]" : "bg-[#F3F4F6]",
-                      pending && "animate-pulse"
-                    )}
-                  />
-                ))}
-              </div>
-            ))}
+            {pending ? (
+              <SpiralLoading
+                isLoading={pending}
+                size={16}
+                cellSize='w-4 h-4 sm:w-5 sm:h-5'
+              />
+            ) : (
+              <GridDisplay data={aiResponse} cellSize='w-4 h-4 sm:w-5 sm:h-5' />
+            )}
           </motion.div>
         </div>
 
