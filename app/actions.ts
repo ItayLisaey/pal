@@ -43,6 +43,7 @@ Guidelines:
 - Center the design when feasible
 - Communicate abstractly through images, not just words
 - Utilize the grid's resolution for enhanced detail
+- Try not to use "faces" in your designs
 
 Simple Examples that demonstrate the rules:
 Heart:

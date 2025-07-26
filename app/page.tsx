@@ -1,10 +1,8 @@
 "use client";
 
-import { GridDisplay } from "@/components/grid-display";
 import { SpiralLoading } from "@/components/spiral-loading";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2Icon, SendIcon } from "lucide-react";
+import { CornerDownLeft } from "lucide-react";
 import { motion } from "motion/react";
 import { useState, useTransition } from "react";
 import { generateBlock } from "./actions";
@@ -20,9 +18,13 @@ export default function Home() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const input = e.currentTarget.querySelector("input") as HTMLInputElement;
+    const value = input?.value;
+    if (!value) return;
+
+    input.value = ""; // Clear input after submission
+
     startTransition(async () => {
-      const value = e.currentTarget.querySelector("input")?.value;
-      if (!value) return;
       const response = await generateBlock(value);
       setAiResponse(response.matrix);
     });
@@ -37,39 +39,34 @@ export default function Home() {
             animate={{ opacity: 1 }}
             className='p-3 sm:p-4 bg-card rounded-lg'
           >
-            {pending ? (
-              <SpiralLoading
-                isLoading={pending}
-                size={16}
-                cellSize='w-4 h-4 sm:w-5 sm:h-5'
-              />
-            ) : (
-              <GridDisplay data={aiResponse} cellSize='w-4 h-4 sm:w-5 sm:h-5' />
-            )}
+            <SpiralLoading
+              isLoading={pending}
+              targetData={!pending ? aiResponse : undefined}
+              size={16}
+              cellSize='w-4 h-4 sm:w-5 sm:h-5'
+            />
           </motion.div>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className='w-full flex flex-col items-center gap-3 sm:gap-4 px-8 sm:px-4'
+          className='w-full flex justify-center px-8 sm:px-4'
         >
-          <Input
-            type='text'
-            placeholder='⚡️ 🌀 ⭐️ ✨ 🎲 🎮 🎯 🎪'
-            className='bg-[#F3F4F6] text-black border-none'
-            // className='w-full'
-          />
-          <Button
-            type='submit'
-            disabled={pending}
-            className='w-full sm:w-auto bg-[#1b1b1b] text-white'
-          >
-            {pending ? (
-              <Loader2Icon className='w-4 h-4 animate-spin' />
-            ) : (
-              <SendIcon className='w-4 h-4' />
-            )}
-          </Button>
+          <div className='relative w-full max-w-md'>
+            <Input
+              type='text'
+              placeholder='⚡️ 🌀 ⭐️ ✨ 🎲 🎮 🎯 🎪'
+              className='bg-[#F3F4F6] text-black border-none pr-12'
+              disabled={pending}
+            />
+            <div className='absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none'>
+              <CornerDownLeft
+                className={`w-4 h-4 transition-colors ${
+                  pending ? "text-gray-400" : "text-gray-600"
+                }`}
+              />
+            </div>
+          </div>
         </form>
       </div>
     </div>

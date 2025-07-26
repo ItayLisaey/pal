@@ -6,6 +6,7 @@ interface SpiralLoadingProps {
   onComplete?: () => void;
   size?: number;
   cellSize?: string;
+  targetData?: string[][];
 }
 
 function generateSpiralOrder(size: number): number[][] {
@@ -46,24 +47,22 @@ export function SpiralLoading({
   onComplete,
   size = 16,
   cellSize = "w-4 h-4 sm:w-5 sm:h-5",
+  targetData,
 }: SpiralLoadingProps) {
   const [spiralOrder] = useState(() => generateSpiralOrder(size));
   const [activeIndex, setActiveIndex] = useState(-1);
   const [isClosing, setIsClosing] = useState(false);
+  const [isMorphing, setIsMorphing] = useState(false);
+  const [showFinalResult, setShowFinalResult] = useState(false);
 
   useEffect(() => {
-    if (!isLoading) {
-      setIsClosing(true);
-      // Quick close animation
-      const timer = setTimeout(() => {
-        setActiveIndex(-1);
-        setIsClosing(false);
-        onComplete?.();
-      }, 800);
-      return () => clearTimeout(timer);
-    } else {
+    if (isLoading) {
+      // Reset states when loading starts
       setIsClosing(false);
+      setIsMorphing(false);
+      setShowFinalResult(false);
       setActiveIndex(-1);
+
       // Start the spiral animation
       const timer = setTimeout(() => {
         let index = 0;
@@ -80,10 +79,27 @@ export function SpiralLoading({
       }, 100);
 
       return () => clearTimeout(timer);
+    } else if (targetData && !showFinalResult) {
+      // Morphing transition - spiral is complete, now morph to result
+      setIsMorphing(true);
+      setActiveIndex(spiralOrder.length - 1); // All cells active
+
+      const timer = setTimeout(() => {
+        setIsMorphing(false);
+        setShowFinalResult(true);
+        onComplete?.();
+      }, 1500); // Give time for morphing animation
+
+      return () => clearTimeout(timer);
     }
-  }, [isLoading, spiralOrder.length, onComplete]);
+  }, [isLoading, spiralOrder.length, onComplete, targetData, showFinalResult]);
 
   const getCellDelay = (rowIndex: number, cellIndex: number): number => {
+    if (isMorphing) {
+      // Top-to-bottom stagger for morphing
+      return rowIndex * 80 + cellIndex * 5; // Row delay + slight column offset
+    }
+
     const cellOrder = spiralOrder.findIndex(
       ([r, c]) => r === rowIndex && c === cellIndex
     );
@@ -122,7 +138,16 @@ export function SpiralLoading({
                       boxShadow: "0 0 0px rgba(59, 130, 246, 0)",
                     }}
                     animate={
-                      isLoading
+                      showFinalResult && targetData
+                        ? {
+                            scale: 1,
+                            backgroundColor:
+                              targetData[rowIndex]?.[cellIndex] === "1"
+                                ? "#1b1b1b"
+                                : "#F3F4F6",
+                            boxShadow: "0 0 0px rgba(59, 130, 246, 0)",
+                          }
+                        : isLoading
                         ? {
                             scale: isActive ? [0.3, 1.1, 1] : 0.3,
                             backgroundColor: isActive
@@ -136,10 +161,13 @@ export function SpiralLoading({
                                 ]
                               : "0 0 0px rgba(59, 130, 246, 0)",
                           }
-                        : isClosing
+                        : isMorphing && targetData
                         ? {
-                            scale: [1, 0.3],
-                            backgroundColor: ["#2563EB", "#F3F4F6"],
+                            scale: 1,
+                            backgroundColor:
+                              targetData[rowIndex]?.[cellIndex] === "1"
+                                ? ["#2563EB", "#1b1b1b"]
+                                : ["#2563EB", "#F3F4F6"],
                             boxShadow: [
                               "0 0 4px rgba(59, 130, 246, 0.3)",
                               "0 0 0px rgba(59, 130, 246, 0)",
@@ -152,9 +180,10 @@ export function SpiralLoading({
                           }
                     }
                     transition={{
-                      duration: isClosing ? 0.3 : 0.6,
-                      delay: isLoading || isClosing ? delay / 1000 : 0,
-                      ease: "easeInOut",
+                      duration: isMorphing ? 0.4 : isClosing ? 0.3 : 0.6,
+                      delay:
+                        isMorphing || isLoading || isClosing ? delay / 1000 : 0,
+                      ease: isMorphing ? "easeOut" : "easeInOut",
                       repeat: isLoading && isActive ? Infinity : 0,
                       repeatType: "reverse",
                       repeatDelay: 0.5,
