@@ -13,9 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "fluffy-palm-tree",
-  description:
-    "Dancing bananas juggling rainbow unicorns while quantum teapots brew interdimensional spaghetti code",
+  title: "fluffy-palm",
+  icons: {
+    icon: "/coconut_1f965.png",
+  },
 };
 
 export default function RootLayout({
