@@ -13,7 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "fluffy-palm",
+  title: "pal.boats",
+  openGraph: {
+    images: "/Pal - OG - Image.png",
+  },
   icons: {
     icon: "/coconut_1f965.png",
   },
