@@ -13,12 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "pal.boats",
+  title: "Probable Pal",
   openGraph: {
     images: "/Pal - OG - Image.png",
   },
   icons: {
-    icon: "/coconut_1f965.png",
+    icon: "/Pal Icon.png",
   },
 };
 
