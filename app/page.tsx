@@ -1,10 +1,12 @@
 "use client";
 
 import { SpiralLoading } from "@/components/spiral-loading";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CoreMessage } from "ai";
-import { CornerDownLeft } from "lucide-react";
+import { CornerDownLeft, Github } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { generateBlock } from "./actions";
 export const maxDuration = 60;
@@ -77,6 +79,16 @@ export default function Home() {
             </div>
           </div>
         </form>
+        <div className='flex flex-col gap-2'>
+          <Button variant='ghost' size='icon' asChild>
+            <Link
+              target='_blank'
+              href='https://github.com/itaylisaey/fluffy-palm-tree'
+            >
+              <Github className='w-4 h-4' />
+            </Link>
+          </Button>
+        </div>
       </div>
     </div>
   );
